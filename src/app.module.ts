@@ -5,6 +5,10 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { join } from 'path';
 import { UserModule } from './user/user.module';
+import { JwtModule } from '@nestjs/jwt';
+import { jwtConstant } from './constants';
+import { APP_GUARD } from '@nestjs/core';
+import { AuthGuard } from './guards/auth.guard';
 
 @Module({
   imports: [
@@ -17,8 +21,20 @@ import { UserModule } from './user/user.module';
       },
     }),
     UserModule,
+    JwtModule.register({
+      global: true,
+      secret: jwtConstant,
+      signOptions: { expiresIn: '60s' },
+    }),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+
+    {
+      provide: APP_GUARD,
+      useClass: AuthGuard,
+    },
+  ],
 })
 export class AppModule {}
