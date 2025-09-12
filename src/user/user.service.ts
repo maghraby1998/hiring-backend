@@ -1,7 +1,12 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from 'prisma.service';
 import * as bcrypt from 'bcrypt';
+import { User } from '@prisma/client';
 
 @Injectable()
 export class UserService {
@@ -32,7 +37,7 @@ export class UserService {
   async signIn(
     username: string,
     pass: string,
-  ): Promise<{ access_token: string }> {
+  ): Promise<{ user: User; access_token: string }> {
     const user = await this.prisma.user.findFirst({
       where: { email: username },
     });
@@ -41,14 +46,15 @@ export class UserService {
       const isMatch = await bcrypt.compare(pass, user.password);
 
       if (!isMatch) {
-        throw new UnauthorizedException();
+        throw new BadRequestException('wrong credentials');
       }
       const payload = { sub: user.id, username: user.email };
       return {
+        user,
         access_token: await this.jwtService.signAsync(payload),
       };
     } else {
-      throw new UnauthorizedException();
+      throw new BadRequestException('wrong credentials');
     }
   }
 }

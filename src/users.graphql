@@ -14,4 +14,15 @@ input UserInput {
 
 type Mutation {
   createUser(input: UserInput): User
+  signIn(input: SignInInput): SignInResponse
+}
+
+input SignInInput {
+  email: String
+  password: String
+}
+
+type SignInResponse {
+  user: User
+  access_token: String
 }
