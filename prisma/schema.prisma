@@ -13,12 +13,61 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum UserType {
+  EMPLOYEE
+  EMPLOYER
+}
+
 model User {
-  id       Int    @id @default(autoincrement())
+  id       Int       @id @default(autoincrement())
   name     String
-  email    String @unique
+  email    String    @unique
   age      Int
   password String
+  type     UserType
+  company  Company?
+  employee Employee?
 
   @@map("users")
+}
+
+model Employee {
+  id          Int          @id @default(autoincrement())
+  userId      Int          @unique
+  user        User         @relation(fields: [userId], references: [id])
+  experiences Experience[]
+  skills      Skill[]
+
+  @@map("employees")
+}
+
+model Experience {
+  id          Int      @id @default(autoincrement())
+  from        DateTime
+  to          DateTime
+  title       String
+  description String?
+  employeeId  Int
+  user        Employee @relation(fields: [employeeId], references: [id])
+
+  @@map("experiences")
+}
+
+model Skill {
+  id         Int      @id @default(autoincrement())
+  name       String
+  employeeId Int
+  employee   Employee @relation(fields: [employeeId], references: [id])
+
+  @@map("skills")
+}
+
+model Company {
+  id         Int      @id @default(autoincrement())
+  name       String
+  created_at DateTime
+  userId     Int      @unique
+  user       User     @relation(fields: [userId], references: [id])
+
+  @@map("companies")
 }
