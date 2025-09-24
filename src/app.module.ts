@@ -9,6 +9,9 @@ import { JwtModule } from '@nestjs/jwt';
 import { jwtConstant } from './constants';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './guards/auth.guard';
+import { ExperienceModule } from './experience/experience.module';
+import { CompanyModule } from './company/company.module';
+import { SkillModule } from './skill/skill.module';
 
 @Module({
   imports: [
@@ -26,6 +29,9 @@ import { AuthGuard } from './guards/auth.guard';
       secret: jwtConstant,
       signOptions: { expiresIn: '60s' },
     }),
+    ExperienceModule,
+    CompanyModule,
+    SkillModule,
   ],
   controllers: [AppController],
   providers: [

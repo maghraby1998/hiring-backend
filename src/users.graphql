@@ -10,6 +10,14 @@ type Query {
 input UserInput {
   name: String
   email: String
+  type: UserType
+  experiences: [ExperienceInput]
+  skills: [SkillInput]
+}
+
+enum UserType {
+  EMPLOYEE
+  EMPLOYER
 }
 
 type Mutation {
