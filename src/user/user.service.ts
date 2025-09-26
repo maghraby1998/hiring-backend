@@ -30,6 +30,7 @@ export class UserService {
         email: data.email,
         age: 27,
         password: hash,
+        type: 'EMPLOYEE',
       },
     });
   }
